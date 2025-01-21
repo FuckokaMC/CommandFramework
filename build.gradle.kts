@@ -38,10 +38,11 @@ publishing {
                 password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
             }
         }
-        publications {
-            register<MavenPublication>("gpr") {
-                from(components["java"])
-            }
+    }
+    publications {
+        register<MavenPublication>("gpr") {
+            artifactId = archivesBaseName
+            from(components["java"])
         }
     }
 }
