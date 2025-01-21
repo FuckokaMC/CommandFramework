@@ -39,12 +39,24 @@ abstract class CommandBase : TabExecutor {
         p3: Array<out String>
     ): MutableList<String>? {
         return when (p3.size) {
-            // 親コマンドのonTabComplete
-            0 -> onTabComplete(p0, p1, p2, p3.toList())
-            // サブコマンド名
-            1 -> subCommands.keys.filter { it.startsWith(p3[0]) }.toMutableList()
-            // サブコマンドのonTabComplete
-            else -> subCommands[p3[0]]?.onTabComplete(p0, p1, p3[0], p3.drop(1).toTypedArray())
+            1 -> {
+                // 親コマンドの引数とサブコマンドを合わせたListを返す
+                val joined = mutableListOf<String>()
+                val parent = onTabComplete(p0, p1, p2, p3.toList()) ?: mutableListOf()
+                val sub = subCommands.keys.filter { it.startsWith(p3[0]) }.toMutableList()
+                joined.addAll(parent)
+                joined.addAll(sub)
+                joined
+            }
+
+            else -> {
+                // サブコマンドがある場合はサブコマンドのList、無い場合は親コマンドのListを返す
+                if (subCommands[p3[0]] != null) {
+                    subCommands[p3[0]]!!.onTabComplete(p0, p1, p2, p3)
+                } else {
+                    onTabComplete(p0, p1, p2, p3.toList())
+                }
+            }
         }
     }
 
