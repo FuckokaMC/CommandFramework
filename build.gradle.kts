@@ -41,7 +41,6 @@ publishing {
     }
     publications {
         register<MavenPublication>("gpr") {
-            artifactId = archivesBaseName
             from(components["java"])
         }
     }
