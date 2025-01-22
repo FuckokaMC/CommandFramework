@@ -41,6 +41,7 @@ publishing {
     }
     publications {
         register<MavenPublication>("gpr") {
+            artifactId = "command-framework"
             from(components["java"])
         }
     }
