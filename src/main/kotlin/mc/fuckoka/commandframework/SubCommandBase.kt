@@ -5,8 +5,8 @@ import org.bukkit.command.TabExecutor
 
 abstract class SubCommandBase(
     val name: String,
-    val usage: String,
     val permission: String,
+    val usage: String = "",
     val aliases: Array<String> = arrayOf()
 ) : TabExecutor {
     fun testPermission(sender: CommandSender): Boolean {
