@@ -17,33 +17,36 @@ abstract class CommandBase : TabExecutor {
         args: List<String>
     ): MutableList<String>?
 
-    final override fun onCommand(p0: CommandSender, p1: Command, p2: String, p3: Array<out String>): Boolean {
-        if (p3.isNotEmpty()) {
-            val subCommand = subCommands[p3[0]]
+    final override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ): Boolean {
+        if (args.isNotEmpty()) {
+            val subCommand = subCommands[args[0]]
             if (subCommand != null) {
                 // サブコマンドの実行権限を持っていない場合は終了
-                if (!subCommand.testPermission(p0)) return true
+                if (!subCommand.testPermission(sender)) return true
 
-                // サブコマンドの実行結果をそのまま返す
-                return subCommand.onCommand(p0, p1, p3[0], p3.drop(1).toTypedArray())
+                return subCommand.onCommand(sender, command, args[0], args.drop(1).toTypedArray())
             }
         }
 
-        return onCommand(p0, p1, p2, p3.toList())
+        return onCommand(sender, command, label, args.toList())
     }
 
     final override fun onTabComplete(
-        p0: CommandSender,
-        p1: Command,
-        p2: String,
-        p3: Array<out String>
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
     ): MutableList<String>? {
-        return when (p3.size) {
+        return when (args.size) {
             1 -> {
-                // 親コマンドの引数とサブコマンドを合わせたListを返す
                 val joined = mutableListOf<String>()
-                val parent = onTabComplete(p0, p1, p2, p3.toList()) ?: mutableListOf()
-                val sub = subCommands.keys.filter { it.startsWith(p3[0]) }.toMutableList()
+                val parent = onTabComplete(sender, command, label, args.toList()) ?: mutableListOf()
+                val sub = subCommands.keys.filter { it.startsWith(args[0]) }.toMutableList()
                 joined.addAll(parent)
                 joined.addAll(sub)
                 joined
@@ -51,10 +54,10 @@ abstract class CommandBase : TabExecutor {
 
             else -> {
                 // サブコマンドがある場合はサブコマンドのList、無い場合は親コマンドのListを返す
-                if (subCommands[p3[0]] != null) {
-                    subCommands[p3[0]]!!.onTabComplete(p0, p1, p2, p3)
+                if (subCommands[args[0]] != null) {
+                    subCommands[args[0]]!!.onTabComplete(sender, command, args[0], args.drop(1).toTypedArray())
                 } else {
-                    onTabComplete(p0, p1, p2, p3.toList())
+                    onTabComplete(sender, command, label, args.toList())
                 }
             }
         }
