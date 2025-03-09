@@ -1,0 +1,10 @@
+name: CommandFramework
+version: 1.0.2
+main: mc.fuckoka.commandframework.CommandFramework
+description: コマンドフレームワーククラス提供
+author: deceitya
+website: https://github.com/FuckokaMC/CommandFramework
+api-version: 1.21
+load: STARTUP
+libraries:
+  - org.jetbrains.kotlin:kotlin-stdlib:2.1.10

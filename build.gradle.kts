@@ -1,31 +1,35 @@
 plugins {
-    kotlin("jvm") version "2.0.21"
-    `maven-publish`
+    kotlin("jvm") version "2.1.10"
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    `maven-publish`
 }
 
 group = "mc.fuckoka"
-version = "1.0.1"
+version = "1.0.2"
 
 repositories {
     mavenCentral()
-    maven {
-        name = "papermc"
-        url = uri("https://repo.papermc.io/repository/maven-public/")
+    maven("https://repo.papermc.io/repository/maven-public/") {
+        name = "papermc-repo"
+    }
+    maven("https://oss.sonatype.org/content/groups/public/") {
+        name = "sonatype"
     }
 }
 
 dependencies {
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib")
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     testImplementation(kotlin("test"))
 }
 
-tasks.test {
-    useJUnitPlatform()
+val targetJavaVersion = 21
+kotlin {
+    jvmToolchain(targetJavaVersion)
 }
 
-kotlin {
-    jvmToolchain(21)
+tasks.build {
+    dependsOn("shadowJar")
 }
 
 publishing {
